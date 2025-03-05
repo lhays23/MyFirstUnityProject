@@ -4,33 +4,26 @@ public class SkullProjectile : MonoBehaviour
 {
     public float speed = 5f;
     public int damage = 10;
-    private Vector2 targetPosition;
+    private Vector2 moveDirection;
+    private readonly float lifetime = 3f; // ✅ Projectile disappears after 3 seconds
 
-    public void SetTarget(Vector2 position)
+    public void SetTarget(Vector2 targetPosition)
     {
-        targetPosition = position;
+        moveDirection = (targetPosition - (Vector2)transform.position).normalized;
+        Destroy(gameObject, lifetime); // ✅ Schedule auto-destruction
     }
 
     void Update()
     {
-        if (targetPosition != (Vector2)transform.position)
-        {
-            targetPosition = FindObjectOfType<PlayerHealth>().transform.position;
-        }
-        transform.position = Vector2.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
-
-        if ((Vector2)transform.position == targetPosition)
-        {
-            Destroy(gameObject); // Destroy projectile when it reaches the target
-        }
+        transform.position += (Vector3)(moveDirection * speed * Time.deltaTime);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log("Player hit by skull projectile!");
-            Destroy(gameObject); // Destroy projectile on impact
+            // Debug.Log("Player hit by skull projectile!");
+            Destroy(gameObject); // ✅ Destroy projectile on impact
         }
     }
 }

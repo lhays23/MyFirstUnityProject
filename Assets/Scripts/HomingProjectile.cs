@@ -32,7 +32,9 @@ public class HomingProjectile : MonoBehaviour
         );
 
         // OPTIMIZED: Use squared magnitude instead of Vector2.Distance()
-        float distanceSquared = (transform.position - target.position).sqrMagnitude;
+        Vector2 difference = (Vector2)(target.position - transform.position);
+        float distanceSquared = difference.x * difference.x + difference.y * difference.y;
+
         if (distanceSquared < 0.1f * 0.1f) // 0.1f squared for faster check
         {
             Destroy(gameObject); // Destroy when close to the target

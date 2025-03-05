@@ -30,7 +30,7 @@ public class PlayerCombat : MonoBehaviour
         if (hit.collider != null && hit.collider.TryGetComponent(out EnemyBase enemy)) // Optimized check
         {
             targetEnemy = enemy.transform;
-            Debug.Log("Targeting enemy: " + targetEnemy.name);
+            //Debug.Log("Targeting enemy: " + targetEnemy.name);
         }
     }
 
@@ -46,7 +46,7 @@ public class PlayerCombat : MonoBehaviour
         }
         else
         {
-            Debug.LogError("Projectile does not have a HomingProjectile script!");
+            //Debug.LogError("Projectile does not have a HomingProjectile script!");
         }
     }
 }

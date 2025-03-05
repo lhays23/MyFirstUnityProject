@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 public abstract class EnemyBase : MonoBehaviour
 {
@@ -10,62 +11,90 @@ public abstract class EnemyBase : MonoBehaviour
     protected Transform player;
     protected bool isUsingAbility = false;
 
-    public Slider healthBar; // Reference to health bar UI
+    public float patrolSpeed = 1f;
+    public float patrolRange = 3f;
+    public float patrolWaitTime = 2f;
+    private Vector2 patrolTarget;
+    private bool isPatrolling = false;
 
-    protected virtual void Awake()
+    public Slider healthBar;
+
+    void Start()
     {
-        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
-        if (playerObj != null)
+        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+        if (playerObject != null)
         {
-            player = playerObj.transform;
+            player = playerObject.transform;
         }
 
         currentHealth = maxHealth;
         UpdateHealthBar();
+        StartCoroutine(PatrolRoutine()); // ✅ Start patrolling
     }
 
-    protected virtual void Update()
+    void Update()
     {
-        if (player == null || isUsingAbility) return;
+        if (player == null) return;
 
         float distanceToPlayer = Vector2.Distance(transform.position, player.position);
 
-        if (distanceToPlayer < detectionRange)
+        if (distanceToPlayer < detectionRange && !isUsingAbility)
         {
+            isPatrolling = false; // Stop patrolling when chasing
             MoveTowardPlayer();
         }
+        else if (!isPatrolling)
+        {
+            StartCoroutine(PatrolRoutine()); // Resume patrolling if player is out of range
+        }
 
-        if (ShouldUseAbility(distanceToPlayer))
+        // Ensure ability is only triggered if it isn't already being used
+        if (!isUsingAbility && ShouldUseAbility(distanceToPlayer))
         {
             StartCoroutine(UseAbility());
         }
     }
 
+
     protected virtual void MoveTowardPlayer()
     {
-        if (player != null) // Extra safety check
+        transform.position = Vector2.MoveTowards(transform.position, player.position, speed * Time.deltaTime);
+    }
+
+    private IEnumerator PatrolRoutine()
+    {
+        isPatrolling = true;
+
+        while (player == null || Vector2.Distance(transform.position, player.position) > detectionRange)
         {
-            transform.position = Vector2.MoveTowards(transform.position, player.position, speed * Time.deltaTime);
+            patrolTarget = (Vector2)transform.position + Random.insideUnitCircle * patrolRange;
+            yield return StartCoroutine(MoveToPatrolPoint(patrolTarget));
+
+            yield return new WaitForSeconds(patrolWaitTime); // Pause before choosing new point
+        }
+
+        isPatrolling = false; // Stop patrolling when player is detected
+    }
+
+    private IEnumerator MoveToPatrolPoint(Vector2 target)
+    {
+        while ((Vector2)transform.position != target)
+        {
+            transform.position = Vector2.MoveTowards(transform.position, target, patrolSpeed * Time.deltaTime);
+            yield return null;
         }
     }
 
     public void TakeDamage(int damage)
     {
-        Debug.Log(name + " took " + damage + " damage!"); // Debug message
-
         currentHealth -= damage;
-
-        if (healthBar != null && healthBar.value != (float)currentHealth / maxHealth)
-        {
-            UpdateHealthBar();
-        }
+        UpdateHealthBar();
 
         if (currentHealth <= 0)
         {
             Die();
         }
     }
-
 
     void UpdateHealthBar()
     {
@@ -75,11 +104,11 @@ public abstract class EnemyBase : MonoBehaviour
         }
     }
 
-    protected virtual void Die()
+    void Die()
     {
         Destroy(gameObject);
     }
 
     protected abstract bool ShouldUseAbility(float distanceToPlayer);
-    protected abstract System.Collections.IEnumerator UseAbility();
+    protected abstract IEnumerator UseAbility();
 }
