@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 30ac5ed1d5023e04cb80cf9c84b4606c
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - meleeHitbox: {instanceID: 0}
+  - projectilePrefab: {fileID: 4772787292744418371, guid: 732f1e4a11229834fa2010a38666ce40, type: 3}
+  - firePoint: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
