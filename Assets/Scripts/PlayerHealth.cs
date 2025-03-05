@@ -11,15 +11,26 @@ public class PlayerHealth : MonoBehaviour
     {
         currentHealth = maxHealth;
         UpdateHealthBar();
+        IEnumerator InvulnerabilityCooldown()
+    {
+        isInvulnerable = true;
+        yield return new WaitForSeconds(1f);
+        isInvulnerable = false;
     }
+}
+
+    private bool isInvulnerable = false;
 
     public void TakeDamage(int damage)
     {
+        if (isInvulnerable) return;
         currentHealth -= damage;
         currentHealth = Mathf.Max(currentHealth, 0); // Prevent negative health
         UpdateHealthBar();
 
         Debug.Log("Player took " + damage + " damage! Current health: " + currentHealth);
+
+        StartCoroutine(InvulnerabilityCooldown());
 
         if (currentHealth <= 0)
         {

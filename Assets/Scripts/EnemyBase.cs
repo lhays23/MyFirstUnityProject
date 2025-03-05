@@ -12,7 +12,7 @@ public abstract class EnemyBase : MonoBehaviour
 
     public Slider healthBar; // Reference to health bar UI
 
-    protected virtual void Start()
+    protected virtual void Awake()
     {
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)

@@ -13,6 +13,10 @@ public class SkullProjectile : MonoBehaviour
 
     void Update()
     {
+        if (targetPosition != (Vector2)transform.position)
+        {
+            targetPosition = FindObjectOfType<PlayerHealth>().transform.position;
+        }
         transform.position = Vector2.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
 
         if ((Vector2)transform.position == targetPosition)

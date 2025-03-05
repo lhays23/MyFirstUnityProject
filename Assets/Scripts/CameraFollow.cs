@@ -3,7 +3,8 @@ using UnityEngine;
 public class CameraFollow : MonoBehaviour
 {
     public Transform player; // Reference to the player's transform
-    public float smoothSpeed = 0.125f; // Adjusts smoothness of camera movement
+    public float smoothSpeed = 0.125f;
+    private Vector3 velocity = Vector3.zero; // Adjusts smoothness of camera movement
     public Vector3 offset; // Offset distance between player and camera
 
     void LateUpdate()
@@ -11,7 +12,8 @@ public class CameraFollow : MonoBehaviour
         if (player != null)
         {
             Vector3 targetPosition = player.position + offset;
-            transform.position = Vector3.Lerp(transform.position, targetPosition, smoothSpeed);
+            Vector3 smoothedPosition = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, smoothSpeed);
+        transform.position = smoothedPosition;
         }
     }
 }

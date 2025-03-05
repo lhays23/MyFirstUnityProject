@@ -19,6 +19,9 @@ public class SkullEnemy : EnemyBase
     protected override IEnumerator UseAbility()
     {
         isUsingAbility = true;
+        yield return new WaitForSeconds(0.2f); // Short delay before shooting
+    {
+        isUsingAbility = true;
 
         ShootAtPlayer();
         nextAttackTime = Time.time + attackCooldown;
