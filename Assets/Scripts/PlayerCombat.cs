@@ -4,7 +4,7 @@ public class PlayerCombat : MonoBehaviour
 {
     public GameObject projectilePrefab;
     public Transform firePoint;
-    public float attackCooldown = 0.5f;
+    public float attackCooldown = 1.5f;
     private float nextAttackTime = 0f;
     private Transform targetEnemy; // Stores the currently selected enemy
 
