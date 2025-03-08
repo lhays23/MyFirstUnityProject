@@ -16,3 +16,4 @@ MonoBehaviour:
   icon: {fileID: 0}
   itemType: 0
   maxStackSize: 1
+  itemDescription: A sturdy iron sword. Reliable in battle.

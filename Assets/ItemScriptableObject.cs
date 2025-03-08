@@ -7,6 +7,7 @@ public class ItemScriptableObject : ScriptableObject
     public Sprite icon;
     public ItemType itemType;
     public int maxStackSize = 1;
+    [TextArea(3, 5)] public string itemDescription; // ✅ Added detailed description
 
     public virtual void Use()
     {

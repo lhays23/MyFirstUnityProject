@@ -16,3 +16,4 @@ MonoBehaviour:
   icon: {fileID: 0}
   itemType: 1
   maxStackSize: 1
+  itemDescription: A heavy steel helmet for added protection.
