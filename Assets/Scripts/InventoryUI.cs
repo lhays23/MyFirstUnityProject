@@ -50,8 +50,7 @@ public class InventoryUI : MonoBehaviour
             hoverEntry.eventID = EventTriggerType.PointerEnter;
             hoverEntry.callback.AddListener((eventData) =>
             {
-                Vector2 mousePos = Input.mousePosition;
-                ItemTooltip.ShowTooltip(item.itemName, item.itemDescription, mousePos); // ✅ Uses real description now
+                ItemTooltip.ShowTooltip(item.itemName, item.itemDescription); // ✅ Now tooltip follows the cursor
             });
 
             // Mouse Exit (Hide Tooltip)
@@ -59,7 +58,23 @@ public class InventoryUI : MonoBehaviour
             exitEntry.eventID = EventTriggerType.PointerExit;
             exitEntry.callback.AddListener((eventData) =>
             {
-                ItemTooltip.HideTooltip();
+                // ✅ Check if we are still hovering over another item
+                bool stillHovering = false;
+
+                foreach (Transform child in itemGrid)
+                {
+                    if (RectTransformUtility.RectangleContainsScreenPoint(
+                            child.GetComponent<RectTransform>(), Input.mousePosition))
+                    {
+                        stillHovering = true;
+                        break;
+                    }
+                }
+
+                if (!stillHovering)
+                {
+                    ItemTooltip.HideTooltip();
+                }
             });
 
             trigger.triggers.Add(hoverEntry);
