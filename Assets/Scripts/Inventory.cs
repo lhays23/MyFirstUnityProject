@@ -20,15 +20,13 @@ public class Inventory : MonoBehaviour
 
     public void UseItem(ItemScriptableObject item)
     {
-        if (item != null)
+        if (items.Contains(item))
         {
-            Debug.Log("Using item: " + item.itemName);
             item.Use();
-        }
-        else
-        {
-            Debug.LogWarning("Tried to use a null item!");
+            if (item.itemType == ItemType.Consumable)
+            {
+                items.Remove(item);
+            }
         }
     }
-
 }

@@ -14,11 +14,7 @@ public class InventoryUI : MonoBehaviour
     void Start()
     {
         inventoryPanel.SetActive(false);
-        PlayerInventory player = FindFirstObjectByType<PlayerInventory>();
-        if (player != null)
-        {
-            playerInventory = player.GetComponent<Inventory>(); // ✅ Get the actual Inventory component
-        }
+        playerInventory = FindObjectOfType<PlayerInventory>().GetComponent<Inventory>();
         UpdateInventoryUI();
     }
 
@@ -45,11 +41,6 @@ public class InventoryUI : MonoBehaviour
             GameObject slot = Instantiate(itemSlotPrefab, itemGrid);
             slot.GetComponentInChildren<TextMeshProUGUI>().text = item.itemName;
             slot.GetComponentInChildren<Image>().sprite = item.icon;
-
-            // ✅ Add Click Event to Equip Item
-            slot.GetComponent<Button>().onClick.AddListener(() => {
-                EquipmentManager.instance.EquipItem(item);
-            });
 
             // ✅ Add tooltip events
             EventTrigger trigger = slot.AddComponent<EventTrigger>();
