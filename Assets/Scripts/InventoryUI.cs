@@ -11,12 +11,73 @@ public class InventoryUI : MonoBehaviour
 
     private Inventory playerInventory;
 
+    public Sprite emptySlotPlaceholder; // ✅ Assign in Inspector
+
+    void UpdateInventoryUI()
+    {
+        foreach (Transform child in itemGrid)
+        {
+            Destroy(child.gameObject); // ✅ Clear old UI slots
+        }
+
+        for (int i = 0; i < playerInventory.items.Count; i++)
+        {
+            GameObject slot = Instantiate(itemSlotPrefab, itemGrid);
+            Image icon = slot.transform.Find("Icon").GetComponent<Image>(); // ✅ Ensure correct reference
+
+            if (playerInventory.items[i] != null)
+            {
+                icon.sprite = playerInventory.items[i].icon; // ✅ Show item icon
+            }
+            else
+            {
+                icon.sprite = emptySlotPlaceholder; // ✅ Show placeholder
+            }
+
+            // ✅ Tooltip for non-empty slots
+            if (playerInventory.items[i] != null)
+            {
+                EventTrigger trigger = slot.AddComponent<EventTrigger>();
+
+                EventTrigger.Entry hoverEntry = new EventTrigger.Entry();
+                hoverEntry.eventID = EventTriggerType.PointerEnter;
+                hoverEntry.callback.AddListener((eventData) =>
+                {
+                    ItemTooltip.ShowTooltip(playerInventory.items[i].itemName, playerInventory.items[i].itemDescription);
+                });
+
+                EventTrigger.Entry exitEntry = new EventTrigger.Entry();
+                exitEntry.eventID = EventTriggerType.PointerExit;
+                exitEntry.callback.AddListener((eventData) =>
+                {
+                    ItemTooltip.HideTooltip();
+                });
+
+                trigger.triggers.Add(hoverEntry);
+                trigger.triggers.Add(exitEntry);
+            }
+        }
+    }
+
     void Start()
     {
         inventoryPanel.SetActive(false);
-        playerInventory = FindObjectOfType<PlayerInventory>().GetComponent<Inventory>();
-        UpdateInventoryUI();
+
+        PlayerInventory player = FindFirstObjectByType<PlayerInventory>();
+        if (player != null)
+        {
+            playerInventory = player.GetComponent<Inventory>(); // ✅ Assign inventory
+        }
+
+        if (playerInventory == null)
+        {
+            Debug.LogError("❌ Inventory component not found on Player!"); // ✅ Debugging
+            return; // ❌ Prevents further execution
+        }
+
+        UpdateInventoryUI(); // ✅ Only called if playerInventory is valid
     }
+
 
     void Update()
     {
@@ -27,58 +88,18 @@ public class InventoryUI : MonoBehaviour
         }
     }
 
-    public void UpdateInventoryUI()
+    void CreateItemSlot(ItemScriptableObject item, int index)
     {
-        // Clear existing slots
-        foreach (Transform child in itemGrid)
+        GameObject slot = Instantiate(itemSlotPrefab, itemGrid);
+        slot.GetComponent<Image>().sprite = item.icon;
+
+        Button button = slot.GetComponent<Button>();
+        if (button != null)
         {
-            Destroy(child.gameObject);
-        }
-
-        // Create a slot for each item in inventory
-        foreach (var item in playerInventory.items)
-        {
-            GameObject slot = Instantiate(itemSlotPrefab, itemGrid);
-            slot.GetComponentInChildren<TextMeshProUGUI>().text = item.itemName;
-            slot.GetComponentInChildren<Image>().sprite = item.icon;
-
-            // ✅ Add tooltip events
-            EventTrigger trigger = slot.AddComponent<EventTrigger>();
-
-            // Mouse Hover (Show Tooltip)
-            EventTrigger.Entry hoverEntry = new EventTrigger.Entry();
-            hoverEntry.eventID = EventTriggerType.PointerEnter;
-            hoverEntry.callback.AddListener((eventData) =>
-            {
-                ItemTooltip.ShowTooltip(item.itemName, item.itemDescription); // ✅ Now tooltip follows the cursor
-            });
-
-            // Mouse Exit (Hide Tooltip)
-            EventTrigger.Entry exitEntry = new EventTrigger.Entry();
-            exitEntry.eventID = EventTriggerType.PointerExit;
-            exitEntry.callback.AddListener((eventData) =>
-            {
-                // ✅ Check if we are still hovering over another item
-                bool stillHovering = false;
-
-                foreach (Transform child in itemGrid)
-                {
-                    if (RectTransformUtility.RectangleContainsScreenPoint(
-                            child.GetComponent<RectTransform>(), Input.mousePosition))
-                    {
-                        stillHovering = true;
-                        break;
-                    }
-                }
-
-                if (!stillHovering)
-                {
-                    ItemTooltip.HideTooltip();
-                }
-            });
-
-            trigger.triggers.Add(hoverEntry);
-            trigger.triggers.Add(exitEntry);
+            PlayerInventory playerInventory = FindFirstObjectByType<PlayerInventory>(); // ✅ Ensure we use PlayerInventory
+            button.onClick.AddListener(() => playerInventory.SelectItem(item)); // ✅ Correct method call
         }
     }
+
+
 }

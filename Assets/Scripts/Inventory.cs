@@ -3,30 +3,56 @@ using UnityEngine;
 
 public class Inventory : MonoBehaviour
 {
+    public int maxInventorySize = 40; // ✅ Always 40 slots
     public List<ItemScriptableObject> items = new List<ItemScriptableObject>();
 
-    public void AddItem(ItemScriptableObject newItem)
+    void Start()
     {
-        items.Add(newItem);
-        Debug.Log("Added item: " + newItem.itemName);
-
-        // Show all items in inventory
-        Debug.Log("Current Inventory:");
-        foreach (var item in items)
+        // Ensure the inventory list is always 40 slots
+        while (items.Count < maxInventorySize)
         {
-            Debug.Log(item.itemName);
+            items.Add(null); // ✅ Fill empty slots with null (placeholders)
         }
     }
 
-    public void UseItem(ItemScriptableObject item)
+    public bool AddItem(ItemScriptableObject item)
     {
-        if (items.Contains(item))
+        // Find the first empty slot
+        for (int i = 0; i < items.Count; i++)
         {
-            item.Use();
-            if (item.itemType == ItemType.Consumable)
+            if (items[i] == null) // ✅ Check for empty slot
             {
-                items.Remove(item);
+                items[i] = item;
+                Debug.Log("✅ Added item: " + item.itemName);
+                return true;
             }
         }
+
+        Debug.LogWarning("❌ Inventory is full! Cannot add " + item.itemName);
+        return false; // ❌ Inventory full
     }
+
+    public void RemoveItem(int index)
+    {
+        if (index >= 0 && index < items.Count)
+        {
+            items[index] = null; // ✅ Remove item (leave empty slot)
+            Debug.Log("❌ Removed item from slot " + index);
+        }
+    }
+
+    public void UseItem(int index)
+    {
+        if (index >= 0 && index < items.Count && items[index] != null)
+        {
+            Debug.Log("✅ Using item: " + items[index].itemName);
+            items[index].Use();
+            RemoveItem(index); // Optional: Remove after use
+        }
+        else
+        {
+            Debug.LogWarning("❌ Cannot use item: Slot is empty or out of range.");
+        }
+    }
+
 }

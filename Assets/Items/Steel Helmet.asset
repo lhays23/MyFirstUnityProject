@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1d08bf5b7c81b834496ca79e12362a27, type: 3}
-  m_Name: Sword
+  m_Name: Steel Helmet
   m_EditorClassIdentifier: 
-  itemName: Sword
-  icon: {fileID: 0}
-  itemType: 0
+  itemName: Steel Helmet
+  icon: {fileID: 8940726673560684646, guid: 33f90103a64619b448b237a9c21257b8, type: 3}
+  itemType: 1
   maxStackSize: 1
-  itemDescription: A sturdy iron sword. Reliable in battle.
+  itemDescription: A heavy steel helmet for added protection.

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Small Health Potion
   m_EditorClassIdentifier: 
   itemName: Small Health Potion
-  icon: {fileID: 0}
+  icon: {fileID: 5397584112496993545, guid: 33f90103a64619b448b237a9c21257b8, type: 3}
   itemType: 0
   maxStackSize: 1
   itemDescription: A small potion that restores 50 HP.

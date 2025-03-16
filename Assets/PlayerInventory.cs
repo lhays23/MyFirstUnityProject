@@ -3,7 +3,8 @@ using UnityEngine;
 public class PlayerInventory : MonoBehaviour
 {
     private Inventory inventory;
-
+    private Inventory playerInventory;
+    private ItemScriptableObject selectedItem;
     public ItemScriptableObject[] defaultItems; // Array for default items
 
     void Awake()
@@ -18,30 +19,53 @@ public class PlayerInventory : MonoBehaviour
 
     void Start()
     {
-        // ✅ Add default items at the start of the game
-        if (defaultItems.Length > 0)
+        // Example: Adding starting items
+        ItemScriptableObject smallHealthPotion = Resources.Load<ItemScriptableObject>("Small Health Potion");
+        ItemScriptableObject sword = Resources.Load<ItemScriptableObject>("Sword");
+
+        if (smallHealthPotion != null && playerInventory.AddItem(smallHealthPotion))
         {
-            foreach (var item in defaultItems)
-            {
-                if (item != null)
-                {
-                    inventory.AddItem(item);
-                    Debug.Log("✅ Added default item: " + item.itemName);
-                }
-            }
+            Debug.Log("✅ Added starting item: " + smallHealthPotion.itemName);
         }
-        else
+
+        if (sword != null && playerInventory.AddItem(sword))
         {
-            Debug.LogWarning("⚠️ No default items assigned in PlayerInventory!");
+            Debug.Log("✅ Added starting item: " + sword.itemName);
         }
     }
 
+
     void Update()
     {
-        // ✅ Press Q to use the first item
-        if (Input.GetKeyDown(KeyCode.Q) && inventory.items.Count > 0)
+        if (Input.GetKeyDown(KeyCode.Q)) // Example: Trying to use an item
         {
-            inventory.UseItem(inventory.items[0]); // Uses the first item in inventory
+            if (selectedItem != null)
+            {
+                int index = playerInventory.items.IndexOf(selectedItem);
+                if (index != -1)
+                {
+                    playerInventory.UseItem(index);
+                }
+            }
+            else
+            {
+                Debug.LogWarning("❌ No item selected!");
+            }
         }
     }
+
+    public void SelectItem(ItemScriptableObject item)
+    {
+        if (item != null)
+        {
+            selectedItem = item;
+            Debug.Log("✅ Selected item: " + selectedItem.itemName);
+        }
+        else
+        {
+            Debug.LogWarning("❌ Tried to select a null item!");
+        }
+    }
+
+
 }
